@@ -13,6 +13,7 @@ const (
 	Queen
 	King
 	Ace
+	MinNum = 2
 )
 
 const (
@@ -24,7 +25,7 @@ const (
 
 type Card struct {
 	suit Suit
-	num  uint8
+	num  int
 }
 
 func (c Card) String() string {
@@ -58,7 +59,7 @@ func (c Card) String() string {
 
 // CreateShuffledDeck creates a new deck with cards in a shuffled order.
 func CreateShuffledDeck() *Deck {
-	cards := createCards() // Create an array of standard cards (A-2, S - D - H - C)
+	cards := createCards() // Create an array of standard cards (2 - A, S - D - H - C)
 	shuffle(cards)         // Shuffle the array of cards
 	deck := NewDeck()      // Create a new empty deck
 
@@ -69,13 +70,20 @@ func CreateShuffledDeck() *Deck {
 	return deck
 }
 
+// CreateRandomCard is used for testing
+func CreateRandomCard() *Card {
+	cardSuit := rand.Intn(int(Spade) + 1)
+	cardNum := rand.Intn(int(Ace+1-MinNum)) + MinNum
+	return &Card{Suit(cardSuit), cardNum}
+}
+
 // createCards creates an array of cards.
 func createCards() []*Card {
 	var cards []*Card
 	index := 0
 	for suit := Diamond; suit <= Spade; suit++ {
-		for num := 2; num <= Ace; num++ {
-			card := &Card{suit: suit, num: uint8(num)}
+		for num := MinNum; num <= Ace; num++ {
+			card := &Card{suit: suit, num: num}
 			cards = append(cards, card)
 			index++
 		}
