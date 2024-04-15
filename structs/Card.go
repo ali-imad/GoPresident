@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 )
 
 type Suit uint8
@@ -13,7 +14,8 @@ const (
 	Queen
 	King
 	Ace
-	MinNum = 2
+	MinNum    = 2
+	TotalNums = 13
 )
 
 const (
@@ -29,6 +31,36 @@ type Card struct {
 }
 
 func (c Card) String() string {
+
+	var numStr = ""
+	var suitStr = ""
+	if c.Suit == Heart {
+		suitStr = "H"
+	}
+	if c.Suit == Club {
+		suitStr = "C"
+	}
+	if c.Suit == Spade {
+		suitStr = "S"
+	}
+	if c.Suit == Diamond {
+		suitStr = "D"
+	}
+	if c.Num == Jack {
+		numStr = "J"
+	} else if c.Num == Queen {
+		numStr = "Q"
+	} else if c.Num == King {
+		numStr = "K"
+	} else if c.Num == Ace {
+		numStr = "A"
+	} else {
+		numStr = strconv.Itoa(int(c.Num))
+	}
+	return fmt.Sprintf("%s.%s", numStr, strings.ToLower(suitStr))
+}
+
+func (c Card) LongString() string {
 	var numStr = ""
 	var suitStr = ""
 	if c.Suit == Heart {

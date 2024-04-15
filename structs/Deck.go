@@ -54,3 +54,22 @@ func NewDeck() *Deck {
 
 	return d
 }
+func (d *Deck) Iterate() <-chan *Card {
+	ch := make(chan *Card)
+
+	go func() {
+		defer close(ch) // Ensure the channel is closed when we finish sending items
+
+		d.lock.Lock()         // Lock acquired for reading
+		defer d.lock.Unlock() // Ensure the lock is released after the function exits
+
+		current := d.head // Start at the head of the deck
+
+		for current != nil {
+			ch <- current.data     // Send the current card to the channel
+			current = current.next // Move to the next card
+		}
+	}()
+
+	return ch
+}

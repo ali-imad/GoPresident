@@ -1,24 +1,44 @@
-package test
+package structs
 
 import (
-	"president-cli/structs"
 	"reflect"
 	"sync"
 	"testing"
 )
 
-func TestCreateShuffledDeck(t *testing.T) {
-	shuffledDeck := structs.NewDeck()
+func TestDeck_Iterate(t *testing.T) {
+	// Create a new deck
+	deck := NewDeck()
+	// Populate the deck with 52 cards in known order
+	for suit := Diamond; suit <= Spade; suit++ {
+		for num := MinNum; num <= Ace; num++ {
+			card := &Card{Suit: suit, Num: num}
+			deck.Push(card)
+		}
+	}
+	// Iterate through the deck and comparing its .Pop() to the card building sequence in reverse order
+	i := 0
+	for card := range deck.Iterate() {
+		expectedCard := &Card{Suit: Spade - Suit(i/TotalNums), Num: Ace - i%TotalNums}
+		if !reflect.DeepEqual(card, expectedCard) {
+			t.Errorf("Expected %v, got %v\n", expectedCard, card)
+		}
+		i++
+	}
+}
+
+func TestDeck_CreateShuffledDeck(t *testing.T) {
+	shuffledDeck := NewDeck()
 	if !(shuffledDeck.Pop() == nil) {
 		t.Errorf("Expected empty deck, got non-empty deck\n")
 	}
-	shuffledDeck = structs.CreateShuffledDeck() // Create a shuffled deck
-	unshuffledDeck := structs.NewDeck()         // Create an unshuffled deck
+	shuffledDeck = CreateShuffledDeck() // Create a shuffled deck
+	unshuffledDeck := NewDeck()         // Create an unshuffled deck
 
 	// Fill the unshuffled deck with cards in a known order
-	for suit := structs.Diamond; suit <= structs.Spade; suit++ {
-		for num := structs.MinNum; num <= structs.Ace; num++ {
-			card := &structs.Card{Suit: suit, Num: num}
+	for suit := Diamond; suit <= Spade; suit++ {
+		for num := MinNum; num <= Ace; num++ {
+			card := &Card{Suit: suit, Num: num}
 			unshuffledDeck.Push(card)
 		}
 	}
@@ -44,17 +64,17 @@ func TestCreateShuffledDeck(t *testing.T) {
 	}
 }
 
-func TestConcurrentPushPop(t *testing.T) {
+func TestDeck_ConcurrentPushPop(t *testing.T) {
 	const numPushers = 1000 // Number of goroutines pushing to the deck
 	const numPoppers = 1000 // Number of goroutines popping from the deck
 	const totalOps = 10000  // Total number of push and pop operations
 	const initSize = 2000
 
-	deck := structs.NewDeck() // Create a new concurrent-safe deck
+	deck := NewDeck() // Create a new concurrent-safe deck
 
 	// Initialize the deck to create a buffer
 	for i := 0; i < initSize; i++ {
-		deck.Push(structs.CreateRandomCard())
+		deck.Push(CreateRandomCard())
 	}
 
 	// Wait group to synchronize all goroutines
@@ -66,7 +86,7 @@ func TestConcurrentPushPop(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < totalOps/numPushers; j++ {
-				deck.Push(&structs.Card{}) // Push a card to the deck
+				deck.Push(&Card{}) // Push a card to the deck
 			}
 		}()
 	}
