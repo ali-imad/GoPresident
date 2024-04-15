@@ -24,35 +24,35 @@ const (
 )
 
 type Card struct {
-	suit Suit
-	num  int
+	Suit Suit
+	Num  int
 }
 
 func (c Card) String() string {
 	var numStr = ""
 	var suitStr = ""
-	if c.suit == Heart {
+	if c.Suit == Heart {
 		suitStr = "Hearts"
 	}
-	if c.suit == Club {
+	if c.Suit == Club {
 		suitStr = "Clubs"
 	}
-	if c.suit == Spade {
+	if c.Suit == Spade {
 		suitStr = "Spades"
 	}
-	if c.suit == Diamond {
+	if c.Suit == Diamond {
 		suitStr = "Diamonds"
 	}
-	if c.num == Jack {
+	if c.Num == Jack {
 		numStr = "Jack"
-	} else if c.num == Queen {
+	} else if c.Num == Queen {
 		numStr = "Queen"
-	} else if c.num == King {
+	} else if c.Num == King {
 		numStr = "King"
-	} else if c.num == Ace {
+	} else if c.Num == Ace {
 		numStr = "Ace"
 	} else {
-		numStr = strconv.Itoa(int(c.num))
+		numStr = strconv.Itoa(int(c.Num))
 	}
 	return fmt.Sprintf("%s of %s", numStr, suitStr)
 }
@@ -83,7 +83,7 @@ func createCards() []*Card {
 	index := 0
 	for suit := Diamond; suit <= Spade; suit++ {
 		for num := MinNum; num <= Ace; num++ {
-			card := &Card{suit: suit, num: num}
+			card := &Card{Suit: suit, Num: num}
 			cards = append(cards, card)
 			index++
 		}
